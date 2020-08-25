@@ -157,7 +157,5 @@ input_para = product(J_list, Nt_list)
 pool = ThreadPool(4)
 
 results = pool.starmap(run, list(input_para))
-mycurser.executemany("")
-
 
 print(results)
