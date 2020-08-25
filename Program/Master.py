@@ -5,16 +5,6 @@ from multiprocessing.dummy import Pool as ThreadPool
 from itertools import product
 import mysql.connector
 
-mydb = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    passwd="zoomg21u",
-    database="hmcdb"
-)
-
-mycurser = mydb.cursor()
-
-sqlAddData = "INSERT INTO hmcdb (J, Nt, dir-correlation, dc-error) VALUES (%s, %s, %s, %s)"
 
 
 # Global Variables
@@ -157,7 +147,5 @@ input_para = product(J_list, Nt_list)
 pool = ThreadPool(4)
 
 results = pool.starmap(run, list(input_para))
-mycurser.executemany("")
-
 
 print(results)
