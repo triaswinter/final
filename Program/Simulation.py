@@ -55,7 +55,7 @@ class HMC:
             acceptance_rate_list.append(acceptance_rate)
             if acceptance_rate <= 0.01:
                 acceptance_rate_list.extend([0]*60)
-                print('low accep rat acceplist', acceptance_rate_list)
+                print('low accep rat acceplist')
                 return acceptance_rate_list
         print('It took {0:0.01f} seconds to find delta'.format(time.time() - start))
 
@@ -96,7 +96,7 @@ class HMC:
                 phi = phi_0
             else:
                 a +=1
-        print('Configuration is generated', a/self.iteration_len)
+        print('Configuration is generated')
         print('It took {0:0.01f} seconds to generate the configuration'.format(time.time() - start))
         return configurations
 
@@ -130,7 +130,6 @@ class HMC:
 
     def deltaplot_data(self, y2):
         # Generate curve fit
-        print('acceptancerate', len(y2), y2)
         try:
             fit_para, fitter = curve_fit(self.fit_func_delta, self.delta_range[:len(y2)], y2)
             delta_fit = float(fit_para[0])
@@ -141,7 +140,6 @@ class HMC:
         except RuntimeError:
             delta_fit = 0.01
             fit = []
-        print('sim lenx leny', len(self.delta_range))
         return self.delta_range, abs(delta_fit), fit, False
 
     def fit_func_delta(self, x, delta_0, W):

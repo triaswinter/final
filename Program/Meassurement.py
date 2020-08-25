@@ -49,7 +49,6 @@ class Correlation:
         x = list()
         max = len(self.configurations)
 
-        print('therm', self.therm)
         # Calculating MV of Spincorrelation of a given axis for each configuration
         for n in range(self.therm, max):
             spin_cor = sum(map(lambda z, y: np.tanh(self.configurations[n][z]) * np.tanh(self.configurations[n][y]), a, self.map_generator()[axis]))/self.Ng
@@ -60,7 +59,6 @@ class Correlation:
         mv_spin_cor = sum(mv_spin_cor_list) / len(mv_spin_cor_list)
         sd_spin_cor = np.sqrt(
             1 / ((max - self.therm) * self.Ng - 1) * sum((np.array(mv_spin_cor_list) - mv_spin_cor) ** 2))
-        print('dim of mv spin', np.array(mv_spin_cor_list).shape)
 
         print('It took {0:0.01f} seconds to calculate spin correlation'.format(time.time() - start))
 
@@ -80,7 +78,7 @@ class Correlation:
             autocor_len = list(map(lambda i: i < auto_spin_cor_list[0]/np.e, auto_spin_cor_list)).index(True)
         except ValueError:
             autocor_len = 0
-        print('acceplist[corlen]', auto_spin_cor_list[autocor_len])
+
         return auto_spin_cor_list, x, autocor_len*120
 
     # Defining spin correlation mapping

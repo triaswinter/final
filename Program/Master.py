@@ -5,8 +5,6 @@ from multiprocessing.dummy import Pool as ThreadPool
 from itertools import product
 import mysql.connector
 
-
-
 # Global Variables
 iteration_len1 = 2000
 iteration_len2 = 300
@@ -35,25 +33,6 @@ def run(J, Nt):
     result_tupel = (J, Nt, mv_spin_correlation_dir, dc_error)
     print(J,Nt, 'Hurricane')
     return result_tupel
-
-
-def who_knows():  # Run simulation and Measurements
-    delta, delta_pd = find_delta()
-    self.config_gen(delta)
-
-    phi_pd1, phi_pd2 = self.phi_correlation()
-    cor_pd1, cor_pd2, mv_spin_correlation_dir = self.spin_correlation()
-
-    plot_list = [delta_pd, phi_pd1, phi_pd2, cor_pd1, cor_pd2]
-    parameters = self.parameters
-    self.SAVE_ARRAY.append([*plot_list, mv_spin_correlation_dir])
-
-    # df = pd.DataFrame([[11, 21, 31], [12, 22, 32], [31, 32, 33]], index=['one', 'two', 'three'], columns=['a', 'b', 'c'])
-
-    if self.enable_plot.get() == 1:
-        self.plot(plot_list)
-
-    self.counter += 1
 
 
 def initialize(method, J, Nt):  # Set Parameters
@@ -90,29 +69,6 @@ def find_delta(hmc_delta):
     return delta, delta_plot_data
 
 
-'''def config_gen(delta):
-    # Get Parameters
-    lat_len = getattr(self.hmc, 'lat_len')
-    Nt = getattr(self.hmc, 'Nt')
-    configuration = self.hmc.create_sample_space(delta)
-
-    # Create a corralation objekt
-    self.cor = SIM.Correlation(configuration, therm, iteration_len1, lat_len, delta, Nt=Nt)
-
-    self.results.insert('end', "Configuration is generated")
-    self.results.see('end')'''
-
-
-'''def plot(plot_list):
-    for i in range(5):
-        fig = SIM.add_subplot(self.fig_list[i], self.counter, self.SAVE_ARRAY[self.counter - 1][i])
-        canvas = FigureCanvasTkAgg(fig, master=self.fig_canvas_list[i])
-        canvas.draw()
-        size = fig.get_size_inches() * fig.dpi
-        self.fig_canvas_list[i].create_window((size[0] // 2, size[1] // 2), window=canvas.get_tk_widget())
-        self.fig_canvas_list[i].configure(scrollregion=self.fig_canvas_list[i].bbox("all"))'''
-
-
 # Measurements
 def phi_correlation(cor):
     y1, x1 = cor.phi_auto_correlation()
@@ -132,8 +88,6 @@ def spin_correlation(cor):
 
     labels_z = ['Spin correlation mean value', 'N', '<S>']
     labels_y = ['Spin autocorrelation mean value', 'N', '<S_0*S_N>']
-
-    print('print the correlation', spin_cor_list)
 
     cor_pd1 = [x1, spin_cor_list, labels_z, []]
     cor_pd2 = [x2, spin_auto_cor_list, labels_y, []]
