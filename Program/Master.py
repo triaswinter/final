@@ -3,6 +3,7 @@ import Meassurement as MES
 import Matrix_generator as MTX
 from multiprocessing.dummy import Pool as ThreadPool
 from itertools import product
+import time
 import mysql.connector
 
 # Global Variables
@@ -53,17 +54,15 @@ def create_matrix(method, J, Nt):
 def find_delta(hmc_delta):
     # Find delta for the simulation with the given parameters (provided that they are proper)
     y = hmc_delta.find_delta()
-    print('find delta is no problem')
     x_max = len(y) - 1
     x, delta, fit, error = hmc_delta.deltaplot_data(y)
-    print('deltaplot data neigher')
     if error is True:
         print('error')
 
 
     # Generate delta plot
     labels = ['Acceptance rate scaling to ' + r'$\delta$', r'$\delta$', 'Acceptancerate']
-    print('gui lenx leny', len(x[:x_max]), len(y[:x_max]))
+
     delta_plot_data = [x[:x_max], y[:x_max], labels, fit[:x_max]]
 
     return delta, delta_plot_data
@@ -98,8 +97,11 @@ def spin_correlation(cor):
 J_list = (0.5,2)
 Nt_list = (3,10)
 input_para = product(J_list, Nt_list)
+
+start = time.time()
 pool = ThreadPool(4)
 
 results = pool.starmap(run, list(input_para))
 
 print(results)
+print('It took {0:0.01f} seconds to simulate all'.format(time.time() - start))
