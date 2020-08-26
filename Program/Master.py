@@ -1,6 +1,7 @@
 import Simulation as SIM
 import Meassurement as MES
 import Matrix_generator as MTX
+import matplotlib.pyplot as plt
 from multiprocessing.dummy import Pool as ThreadPool
 from itertools import product
 import time
@@ -15,7 +16,6 @@ mydb = mysql.connector.connect(
 mycursor = mydb.cursor()
 
 sqlAdd = "INSERT INTO pd_data (J, Nt, dirCorrelation, dcError) VALUES (%s, %s, %s, %s)"
-
 
 
 # Global Variables
@@ -41,7 +41,8 @@ def run(J, Nt):
     # Maybe Safe into SQL
 
     result_tupel = (J, Nt, mv_spin_correlation_dir, dc_error)
-    return result_tupel
+    plot_data = [delta_pd, phi_pd1, phi_pd2, cor_pd1, cor_pd2]
+    return result_tupel, plot_data
 
 
 def initialize(method, J, Nt):  # Set Parameters
@@ -66,7 +67,6 @@ def find_delta(hmc_delta):
     x, delta, fit, error = hmc_delta.deltaplot_data(y)
     if error is True:
         print('error')
-
 
     # Generate delta plot
     labels = ['Acceptance rate scaling to ' + r'$\delta$', r'$\delta$', 'Acceptancerate']
@@ -102,17 +102,35 @@ def spin_correlation(cor):
     return cor_pd1, cor_pd2, mv_spin_cor, sd_spin_cor
 
 
+def plot(x_list, y_list, len, labels):
+    fig, ax = plt.subplots(len)
+    fig.suptitle(labels[0])
+    for i in range(len):
+        ax[i].plot(x_list[i], y_list[i])
+        ax[i].set_ylabel(labels[2])
+
+    ax[len-1].set_xlabel(labels[1])
+
+    return
+
+
 J_list = (0.1, 0.6,1,1.5,2,2.5,4,6,10)
 Nt_list = (3,5,8,11,15,20)
+
 input_para = product(J_list, Nt_list)
 
 start = time.time()
 pool = ThreadPool(8)
 
-results = pool.starmap(run, list(input_para))
+results, plot_data = pool.starmap(run, list(input_para))
 
 
 mycursor.executemany(sqlAdd, results)
+
+len = len(J_list)*len(Nt_list)
+for i in range(len):
+    plot(plot_data[i][0], plot_data[i][1], len)
+    plt.show()
 
 print(results)
 print('It took {0:0.01f} seconds to simulate all'.format(time.time() - start))
