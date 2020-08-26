@@ -7,7 +7,7 @@ import time
 import mysql.connector
 
 mydb = mysql.connector.connect(
-    host="localhost",
+    host="104.154.207.91",
     user="root",
     passwd="zoomg21u",
     database="hmcDatabase")
