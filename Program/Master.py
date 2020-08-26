@@ -6,9 +6,21 @@ from itertools import product
 import time
 import mysql.connector
 
+mydb = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    passwd="zoomg21u",
+    database="hmcDatabase")
+
+mycursor = mydb.cursor()
+
+sqlAdd = "INSERT INTO pd_data (J, Nt, dirCorrelation, dcError) VALUES (%s, %s, %s, %s)"
+
+
+
 # Global Variables
-iteration_len1 = 2000
-iteration_len2 = 300
+iteration_len1 = 20000
+iteration_len2 = 800
 therm = 30
 leapfrog_len = 2
 lat_len = 3
@@ -16,23 +28,19 @@ lat_len = 3
 
 def run(J, Nt):
     # Create Data
-    print('0')
+    print('run with parameter:', J,Nt)
     hmc, hmc_delta = initialize('A', J, Nt)
-    print('1')
     delta, delta_pd = find_delta(hmc_delta)
-    print(J,Nt, '2: here i am')
+
     configurations = hmc.create_sample_space(delta)
     cor = MES.Correlation(configurations, therm, iteration_len1, lat_len, delta, Nt=Nt)
-    print(J,Nt, 'rock you')
 
     # Analyse Data
     phi_pd1, phi_pd2 = phi_correlation(cor)
     cor_pd1, cor_pd2, mv_spin_correlation_dir, dc_error = spin_correlation(cor)
-    print(J,Nt, 'like a')
     # Maybe Safe into SQL
 
     result_tupel = (J, Nt, mv_spin_correlation_dir, dc_error)
-    print(J,Nt, 'Hurricane')
     return result_tupel
 
 
@@ -94,14 +102,17 @@ def spin_correlation(cor):
     return cor_pd1, cor_pd2, mv_spin_cor, sd_spin_cor
 
 
-J_list = (0.5,2)
-Nt_list = (3,10)
+J_list = (0.1, 0.6,1,1.5,2,2.5,4,6,10)
+Nt_list = (3,5,8,11,15,20)
 input_para = product(J_list, Nt_list)
 
 start = time.time()
-pool = ThreadPool(4)
+pool = ThreadPool(8)
 
 results = pool.starmap(run, list(input_para))
+
+
+mycursor.executemany(sqlAdd, results)
 
 print(results)
 print('It took {0:0.01f} seconds to simulate all'.format(time.time() - start))

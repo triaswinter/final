@@ -13,7 +13,7 @@ mydb = mysql.connector.connect(
     host="localhost",
     user="root",
     passwd="zoomg21u",
-    database="testdb"
+    database="hmcDatabase"
 )
 
 mycursor = mydb.cursor()
